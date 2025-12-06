@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: guestbook-ui
-          image: udemykcloud534/guestbook:green
+          image: udemykcloud534/guestbook:blue # Change "blue" to "green" for green deployment
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -28,15 +28,27 @@ spec:
             periodSeconds: 10
   strategy:
     blueGreen:
-      activeService: guestbook-ui
-      previewService: guestbook-ui-canary
+      activeService: guestbook-ui-active
+      previewService: guestbook-ui-preview
       autoPromotionEnabled: false
       scaleDownDelaySeconds: 300
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: guestbook-ui
+  name: guestbook-ui-active
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: guestbook-ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guestbook-ui-preview
   namespace: default
 spec:
   ports:
@@ -49,6 +61,18 @@ apiVersion: v1
 kind: Service
 metadata:
   name: guestbook-ui-blue-green
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: guestbook-ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guestbook-ui-canary
   namespace: default
 spec:
   ports:
@@ -73,6 +97,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: guestbook-ui
+                name: guestbook-ui-active
                 port:
                   number: 80
