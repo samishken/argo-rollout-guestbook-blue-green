@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: guestbook-ui
-          image: udemykcloud534/guestbook:green # Change "blue" to "green" for green deployment
+          image: udemykcloud534/guestbook:blue # Change "blue" to "green" for green deployment
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
